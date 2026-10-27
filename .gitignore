@@ -1,0 +1,12 @@
+.env
+.env.*
+.slack
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.DS_Store
+*.log
+.harness-evolve/runs/
+.harness-evolve/patches/
+.harness-evolve/manifests/

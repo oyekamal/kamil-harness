@@ -1,0 +1,10 @@
+id: eval-001
+description: "A bug report routes to the debugging skill, not free-soloing"
+category: routing
+input: "The login page shows a white screen after I deploy. Fix it."
+expected:
+  route: ".claude/skills/debugging/SKILL.md"
+  must_load: ["skills-router.md"]
+  must_not_load: []
+  max_hops: 2
+quality_gate: PASS

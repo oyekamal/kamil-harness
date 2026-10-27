@@ -1,0 +1,22 @@
+<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>orbs vanilla</title>
+<style>body{background:#070707;margin:0;padding:24px;display:flex;flex-wrap:wrap;gap:16px}html[data-theme=light] body{background:#fff}canvas{display:block}</style></head>
+<body><script type="module">
+import { resolvePreset, MODE_DRAWS } from 'https://cdn.jsdelivr.net/npm/thinking-orbs@0.3.2/dist/engine.es.js';
+const STATES=['working','searching','solving','listening','connecting','weaving','composing','breathing','shaping'];
+const LABELS={working:'Working…',searching:'Searching…',solving:'Solving…',listening:'Listening…',connecting:'Connecting…',weaving:'Weaving…',composing:'Composing…',breathing:'Thinking…',shaping:'Shaping…'};
+function mountOrb(el,{state='working',size=64,speed=1,theme='auto'}={}){
+  const c=document.createElement('canvas'); const dpr=Math.min(2,devicePixelRatio||1);
+  c.width=c.height=Math.round(size*dpr); c.style.width=c.style.height=size+'px';
+  c.setAttribute('role','img'); c.setAttribute('aria-label',LABELS[state]); el.append(c);
+  const ctx=c.getContext('2d'); const {mode,speed:base,opts}=resolvePreset(state,size); const draw=MODE_DRAWS[mode];
+  const isDark=()=>{ if(theme!=='auto')return theme==='dark'; for(let n=c;n;n=n.parentElement){const a=n.getAttribute('data-theme'); if(a)return a==='dark'; if(n.classList.contains('dark'))return true; if(n.classList.contains('light'))return false;} return matchMedia('(prefers-color-scheme: dark)').matches; };
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const frame=t=>{ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,size,size);draw(ctx,size,t,isDark(),opts);};
+  let raf=0; const loop=()=>{frame(performance.now()/1000*base*speed); raf=requestAnimationFrame(loop);};
+  if(reduced.matches) frame(0.6); else loop();
+  new MutationObserver(()=>reduced.matches&&frame(0.6)).observe(document.documentElement,{attributes:true,subtree:true,attributeFilter:['class','data-theme']});
+  return ()=>cancelAnimationFrame(raf);
+}
+for(const size of [64,20]) for(const s of STATES) mountOrb(document.body,{state:s,size});
+window.__ok=true;
+</script></body></html>

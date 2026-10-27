@@ -1,0 +1,10 @@
+id: eval-004
+description: "Negative: a one-line question must not load the whole rules bundle"
+category: negative
+input: "What's today's date?"
+expected:
+  route: "CLAUDE.md"
+  must_load: []
+  must_not_load: ["skills-router.md", "continual-harness.md", "multi-project.md"]
+  max_hops: 2
+quality_gate: PASS

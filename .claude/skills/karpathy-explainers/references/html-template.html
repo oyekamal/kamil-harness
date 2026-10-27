@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOPIC explained</title>
+<!-- Rung-3 template. One file, no external dependencies, works offline and inside a sandboxed iframe.
+     Replace every TODO. Keep the structure: summary -> claims -> interactive -> worked numbers -> weak spots -> sources.
+     ONE source of truth for numbers: window.model(params). Every readout, plot and label value comes from model().
+     window.checks lists values copied from the primary source; html_check.py fails the page if model() disagrees. -->
+<style>
+  :root { --bg:#fbfaf7; --fg:#1d232b; --dim:#5b6470; --card:#ffffff; --line:#d9dde3; --accent:#1f6feb; --warn:#b45309; --q:#7c3aed; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#14171c; --fg:#e9e6dd; --dim:#9aa3ad; --card:#1c2128; --line:#2f3640; --accent:#58a6ff; --warn:#f0b35a; --q:#b794f6; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.55 system-ui, "DejaVu Sans", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.7rem; margin: .2em 0; } h2 { font-size: 1.25rem; margin-top: 2em; }
+  nav.toc { display:flex; flex-wrap:wrap; gap:.4em 1em; font-size:.92rem; border-bottom:1px solid var(--line); padding-bottom:.6em; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  .summary { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent); padding:12px 16px; border-radius:8px; }
+  .formula { font: 1.25rem/1.4 "DejaVu Serif", Georgia, serif; text-align:center; margin: 1em 0; overflow-x:auto; }
+  .tabs [role=tablist] { display:flex; gap:4px; flex-wrap:wrap; } .tabs button[role=tab] { font:inherit; padding:6px 12px; border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:6px 6px 0 0; cursor:pointer; }
+  .tabs button[aria-selected=true] { border-bottom-color: var(--card); font-weight:600; color: var(--accent); }
+  .tabs [role=tabpanel] { border:1px solid var(--line); background:var(--card); padding:12px 16px; border-radius:0 8px 8px 8px; }
+  .lab { display:grid; grid-template-columns: minmax(0,260px) minmax(0,1fr); gap:16px; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:14px; }
+  @media (max-width: 640px) { .lab { grid-template-columns: minmax(0,1fr); } }
+  .lab label { display:block; font-size:.92rem; color:var(--dim); margin-top:8px; } .lab input[type=range] { width:100%; }
+  .readout { font: 600 1.4rem/1.2 ui-monospace, "DejaVu Sans Mono", monospace; color: var(--accent); }
+  canvas { width:100%; height:auto; background:var(--bg); border-radius:6px; display:block; }
+  .predict { border:1px dashed var(--q); padding:10px 14px; border-radius:8px; margin: 1em 0; }
+  details { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px 14px; margin:.6em 0; } summary { cursor:pointer; font-weight:600; }
+  .weak { border-left:4px solid var(--warn); background:var(--card); padding:10px 16px; border-radius:8px; }
+  table { border-collapse: collapse; width:100%; font-size:.95rem; } td, th { border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; }
+  .num { font-family: ui-monospace, "DejaVu Sans Mono", monospace; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>TODO: Topic in one line</h1>
+  <nav class="toc" aria-label="Contents"><a href="#lab">Try it</a><a href="#summary">Summary</a><a href="#idea">The idea</a><a href="#numbers">Worked numbers</a><a href="#weak">Weak spots</a><a href="#sources">Sources</a></nav>
+
+  <section id="lab"><h2>Try it</h2>
+    <!-- FIRST SCREEN: the explorer comes right under the title, above any prose. -->
+    <div class="formula" aria-label="TODO formula read aloud">y = a · x</div>
+    <div class="predict"><b>Predict first:</b> TODO question the slider answers (e.g. "If you double x, what happens to y?")
+      <details><summary>Show the answer</summary><p>TODO answer, stated after the reader has tried.</p></details></div>
+    <div class="lab">
+      <div>
+        <label for="x">x (TODO unit): <span id="xv" class="num"></span></label>
+        <input id="x" type="range" min="0" max="10" step="0.1" value="2">
+        <label for="a">a (TODO unit): <span id="av" class="num"></span></label>
+        <input id="a" type="range" min="0.5" max="3" step="0.1" value="1.5">
+        <label>y (TODO unit)</label>
+        <div id="yOut" class="readout" aria-live="polite"></div>
+        <p id="note" style="font-size:.9rem;color:var(--dim)"></p>
+      </div>
+      <canvas id="plot" width="560" height="320" aria-label="Plot of y against x; the dot is the current value"></canvas>
+    </div>
+  </section>
+
+  <section id="summary"><h2>Summary</h2>
+    <!-- TODO: the STE100 rung-1 text, 3-5 sentences: what it is, what it computes, the one direction rule. -->
+    <p class="summary">TODO summary in short active sentences. One term for one thing.</p>
+  </section>
+
+  <section id="idea"><h2>The idea, one claim per tab</h2>
+    <div class="tabs">
+      <div role="tablist" aria-label="Claims">
+        <button role="tab" aria-selected="true" aria-controls="t1" id="b1">1. TODO claim</button>
+        <button role="tab" aria-selected="false" aria-controls="t2" id="b2">2. TODO claim</button>
+        <button role="tab" aria-selected="false" aria-controls="t3" id="b3">3. TODO claim</button>
+      </div>
+      <div role="tabpanel" id="t1" aria-labelledby="b1"><p>TODO: claim 1, its reason, and the source line.</p></div>
+      <div role="tabpanel" id="t2" aria-labelledby="b2" hidden><p>TODO: claim 2.</p></div>
+      <div role="tabpanel" id="t3" aria-labelledby="b3" hidden><p>TODO: claim 3.</p></div>
+    </div>
+  </section>
+
+  <section id="numbers"><h2>Worked numbers</h2>
+    <!-- Generated from model() at load, so the table can never disagree with the slider. -->
+    <table><thead><tr><th>x</th><th>a</th><th>y</th><th>Source says</th></tr></thead><tbody id="rows"></tbody></table>
+  </section>
+
+  <section id="weak"><h2>Weak spots</h2>
+    <div class="weak"><p><b>Where this explanation is least certain or simplified:</b></p>
+      <ol><li>TODO: assumption the model makes (e.g. ideal behaviour).</li><li>TODO: label or number not on the source page.</li><li>TODO: range where the formula stops working.</li></ol>
+      <p><b>What would change my mind:</b> TODO the observation that would show this is wrong.</p></div>
+  </section>
+
+  <section id="sources"><h2>Sources</h2><ol><li>TODO primary source, page or section.</li></ol></section>
+</main>
+<script>
+// ---- single source of truth -------------------------------------------------
+window.model = function ({ x, a }) { return { y: a * x }; };            // TODO: the real formula
+window.checks = [                                                       // TODO: values copied from the source
+  { input: { x: 2, a: 1.5 }, expect: { y: 3.0 }, tol: 0.005, source: "TODO source, page N" },
+  { input: { x: 10, a: 3 }, expect: { y: 30 }, tol: 0.005, source: "TODO source, page N" },
+];
+// ---- tabs -------------------------------------------------------------------
+document.querySelectorAll('[role=tab]').forEach(tab => tab.addEventListener('click', () => {
+  document.querySelectorAll('[role=tab]').forEach(t => t.setAttribute('aria-selected', t === tab));
+  document.querySelectorAll('[role=tabpanel]').forEach(p => p.hidden = p.id !== tab.getAttribute('aria-controls'));
+}));
+// ---- lab ----------------------------------------------------------------------
+const $ = id => document.getElementById(id), cv = $('plot'), g = cv.getContext('2d');
+const fmt = (v, d = 3) => Number(v).toPrecision(d);
+let shown = null;                                                       // animated dot position
+function draw(p, out, t) {
+  const W = cv.width, H = cv.height, pad = 40, css = getComputedStyle(document.documentElement);
+  const fg = css.getPropertyValue('--fg'), dim = css.getPropertyValue('--dim'), acc = css.getPropertyValue('--accent');
+  const X = v => pad + v / 10 * (W - 2 * pad), Y = v => H - pad - v / 30 * (H - 2 * pad);   // TODO axis ranges
+  g.clearRect(0, 0, W, H); g.strokeStyle = dim; g.lineWidth = 1.5;
+  g.beginPath(); g.moveTo(pad, pad); g.lineTo(pad, H - pad); g.lineTo(W - pad, H - pad); g.stroke();
+  g.fillStyle = dim; g.font = '14px system-ui'; g.fillText('x', W - pad + 6, H - pad + 4); g.fillText('y', pad - 4, pad - 10);
+  g.strokeStyle = acc; g.lineWidth = 3; g.beginPath();
+  for (let i = 0; i <= 100; i++) { const xv = i / 10, yv = window.model({ ...p, x: xv }).y; i ? g.lineTo(X(xv), Y(yv)) : g.moveTo(X(xv), Y(yv)); }
+  g.stroke();
+  g.fillStyle = fg; g.beginPath(); g.arc(X(t.x), Y(t.y), 7, 0, 7); g.fill();
+}
+function update() {
+  const p = { x: +$('x').value, a: +$('a').value }, out = window.model(p);
+  $('xv').textContent = fmt(p.x); $('av').textContent = fmt(p.a); $('yOut').textContent = fmt(out.y) + ' TODO-unit';
+  $('note').textContent = out.y > 20 ? 'TODO: say what this region means.' : '';
+  const target = { x: p.x, y: out.y }; const from = shown || target, t0 = performance.now();
+  const step = now => { const k = Math.min(1, (now - t0) / 250), e = k * k * (3 - 2 * k);
+    shown = { x: from.x + (target.x - from.x) * e, y: from.y + (target.y - from.y) * e }; draw(p, out, shown); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step); draw(p, out, from);
+  parent !== window && parent.postMessage({ type: 'interactive', event: { type: 'change', params: p, outputs: out } }, '*');  // optional: report state to an embedding host
+}
+['x', 'a'].forEach(id => $(id).addEventListener('input', update));
+$('rows').innerHTML = window.checks.map(c => `<tr><td class="num">${c.input.x}</td><td class="num">${c.input.a}</td><td class="num">${fmt(window.model(c.input).y)}</td><td class="num">${c.expect.y} (${c.source})</td></tr>`).join('');
+update();
+</script>
+</body>
+</html>

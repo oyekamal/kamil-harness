@@ -1,0 +1,54 @@
+<!doctype html><meta charset="utf-8"><title>whiteboard</title>
+<style>body{margin:0;background:#f5f6f8;font:16px Inter,system-ui} .card{position:relative;width:640px;height:300px;margin:10px} .card canvas{position:absolute;inset:0} .lbl{position:absolute;font:600 18px "Patrick Hand","Comic Sans MS",cursive;color:#1f2937;transform:translate(-50%,-50%)} #wrap{display:inline-block;background:#f5f6f8} img{display:block;margin:10px}</style>
+<div id="wrap">
+<div class="card" id="c1"><canvas id="main" width="640" height="300"></canvas>
+ <div class="lbl" style="left:130px;top:150px">2x + 3 = 11</div><div class="lbl" style="left:510px;top:150px">x = 4</div><div class="lbl" style="left:320px;top:110px;color:#dc2626">−3, ÷2</div></div>
+<div class="card" id="c2"><canvas id="chalk" width="640" height="300"></canvas></div>
+</div>
+<script type="module">
+import * as brush from "https://cdn.jsdelivr.net/npm/p5.brush@2.2.3/dist/brush.esm.js";
+const MARKER = { black: "#1f2937", blue: "#1d4ed8", red: "#dc2626", green: "#15803d" };
+function arrow(x1, y1, x2, y2, head = 18) {
+  brush.line(x1, y1, x2, y2);
+  const a = Math.atan2(y2 - y1, x2 - x1);
+  for (const s of [-1, 1]) brush.line(x2, y2, x2 - head * Math.cos(a + s * 0.5), y2 - head * Math.sin(a + s * 0.5));
+}
+function board(canvas, bg, draw) {
+  brush.load(canvas);                 // switch target (module-global state)
+  const W = canvas.width, H = canvas.height;
+  brush.clear(bg);
+  brush.push(); brush.translate(-W / 2, -H / 2);
+  draw(W, H);
+  brush.pop(); brush.render();
+}
+brush.scaleBrushes(2.5);
+brush.add("whiteboard", { type: "marker", weight: 3, scatter: 0.12, opacity: 8, spacing: 0.025, pressure: [1.05, 0.95], markerTip: false, noise: 0.15 });
+brush.seed(3); brush.noiseSeed(3);
+board(document.getElementById("main"), "#ffffff", () => {
+  brush.wiggle(1);                                  // slight hand wobble
+  brush.set("whiteboard", MARKER.black, 1);
+  brush.rect(30, 105, 200, 90);
+  brush.set("whiteboard", MARKER.green, 1);
+  brush.rect(420, 105, 180, 90);
+  brush.noField();
+  brush.set("whiteboard", MARKER.red, 0.9);
+  arrow(245, 150, 405, 150);
+  brush.set("marker", "#facc15", 2);               // highlighter swipe under answer
+  brush.line(450, 185, 570, 182);
+});
+brush.seed(4);
+board(document.getElementById("chalk"), "#2b3a33", () => {
+  brush.set("charcoal", "#f1f5f9", 1.2);
+  brush.circle(160, 150, 90, 0.25);
+  brush.hatchStyle("charcoal", "#fde68a", 0.8);
+  brush.hatch(12, 0.6, { rand: 0.15 });
+  brush.set("charcoal", "#f1f5f9", 1);
+  brush.polygon([[360, 240], [600, 240], [600, 60]]);
+  brush.noHatch();
+  brush.set("charcoal", "#93c5fd", 1.2);
+  arrow(260, 150, 350, 200);
+});
+const img = new Image(); img.src = document.getElementById("main").toDataURL(); img.width = 320; img.id = "snap";
+document.body.append(img);
+window.__done = true;
+</script>

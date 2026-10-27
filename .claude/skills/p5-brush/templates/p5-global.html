@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><title>p5 global</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@2.3.4/lib/p5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5.brush@2.2.3/dist/p5.brush.js"></script>
+<script>
+function setup() {
+  const c = createCanvas(600, 600, WEBGL); c.id("main");
+  angleMode(DEGREES);
+  brush.scaleBrushes(3);
+  randomSeed(7); noiseSeed(7);
+  noLoop();
+}
+function draw() {
+  background("#fffceb");
+  translate(-width / 2, -height / 2);
+  brush.set("2B", "#0e2d58", 1.5);
+  brush.rect(60, 60, 200, 140);
+  brush.fill("#fcd300", 90); brush.fillBleed(0.3); brush.fillTexture(0.4, 0.4);
+  brush.circle(420, 140, 90, 0.3);
+  brush.noFill();
+  brush.hatchStyle("rotring", "#ff2702", 1);
+  brush.hatch(10, 30);
+  brush.polygon([[80, 320], [260, 300], [220, 520], [60, 480]]);
+  brush.noHatch();
+  brush.set("charcoal", "#2c695a", 1);
+  brush.spline([[320, 320, 1], [420, 380, 1.5], [380, 480, 0.8], [560, 560, 1]], 1);
+  brush.mass("pastel", "#4e93cc", { strength: 0.8, precision: 0.4 });
+  brush.noStroke();
+  brush.circle(470, 330, 60);
+  brush.noMass();
+  window.__done = true;
+}
+</script>

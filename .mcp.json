@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "duckduckgo": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/gianlucamazza/mcp-duckduckgo",
+        "mcp-duckduckgo"
+      ]
+    }
+  }
+}

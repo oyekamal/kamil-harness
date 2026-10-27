@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Figures · hairline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canvas: #fff; --stone: #f4f4f4; --ink: #0a0a0a; --muted: #737373; --faint: #a3a3a3; --line: rgba(0,0,0,.07);
+    --sans: "Geist", ui-sans-serif, system-ui, sans-serif; --mono: "Geist Mono", ui-monospace, Menlo, monospace; --serif: "Instrument Serif", Georgia, serif;
+    --lift: 0 1px 2px #00000008, 0 10px 28px -16px #00000024;
+    --lift-lg: 0 1px 2px #00000008, 0 2px 6px #00000008, 0 32px 64px -34px #00000038;
+    --card: 0 0 0 1px #0000000f, 0 1px 2px -1px #0000000f, 0 2px 4px 0 #0000000a;
+    --topbar: 54px; --gutter: clamp(18px, 5vw, 28px);
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { min-height: 100vh; background: var(--canvas); color: var(--ink); font: 14px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+  .topbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: var(--topbar);
+    padding: 0 max(var(--gutter), calc((100% - 1080px) / 2 + var(--gutter))); background: color-mix(in srgb, #fff 82%, transparent); backdrop-filter: blur(12px); }
+  .brand { display: flex; align-items: baseline; gap: 8px; } .brand b { font-size: 15px; font-weight: 500; letter-spacing: -.02em; } .brand span { font-size: 12px; color: var(--muted); }
+  .topbar nav { display: flex; align-items: center; margin-right: -10px; } .topbar nav a { display: inline-flex; align-items: center; height: 30px; padding: 0 10px; font-size: 13px; color: var(--muted); }
+  .figs { max-width: 1080px; margin: 0 auto; padding: 56px var(--gutter) 96px; }
+  @media (min-width: 1100px) { .figs { display: grid; grid-template-columns: 200px minmax(0, 760px); column-gap: 60px; align-items: start; } .shelves { display: block !important; position: sticky; top: calc(var(--topbar) + 56px); } }
+  .shelves { display: none; } .shelf-list { display: grid; gap: 2px; margin: 0 -10px; }
+  .shelf { display: flex; align-items: center; gap: 10px; width: 100%; height: 34px; padding: 0 10px; border-radius: 9px; font-size: 13px; color: var(--muted); text-align: left; }
+  .shelf svg { flex: none; color: var(--gc); filter: grayscale(1); opacity: .45; translate: 0 -1px; }
+  .shelf[aria-pressed="true"] { color: var(--ink); background: var(--stone); } .shelf[aria-pressed="true"] svg { filter: none; opacity: 1; }
+  .shelf-n { margin-left: auto; font: 400 11.5px/1 var(--mono); color: var(--faint); } .shelf[aria-pressed="true"] .shelf-n { color: var(--muted); }
+  h1 { font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.01em; } h1 em { font-family: var(--serif); font-size: 1.12em; font-weight: 400; }
+  .lede { margin-top: 12px; max-width: 60ch; color: var(--muted); } .lede a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 4px; }
+  section { display: grid; gap: 14px; padding-top: 56px; }
+  .head { display: flex; align-items: baseline; gap: 10px; min-height: 28px; } .head h2 { font-size: 14px; font-weight: 500; } .count { font: 400 12px/1 var(--mono); color: var(--faint); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .tile { overflow: hidden; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px var(--stone), var(--lift); cursor: pointer; }
+  .tile[data-picked] { box-shadow: inset 0 0 0 1.5px var(--ink), var(--lift); }
+  .stage { position: relative; width: 100%; aspect-ratio: 5 / 4; --hairline-plate: #fff; } .stage > div { width: 100%; }
+  .foot { padding: 10px 14px 12px; border-top: 1px solid var(--line); font-size: 13.5px; font-weight: 500; line-height: 1.4; }
+  .drawer { position: fixed; z-index: 20; inset: calc(var(--topbar) + 14px) 14px 14px auto; width: 360px; overflow-y: auto; padding: 18px 18px 22px; background: #fff;
+    border-radius: 16px; box-shadow: var(--lift-lg), 0 0 0 1px var(--line); display: grid; gap: 16px; align-content: start; }
+  @media (max-width: 899px) { .drawer { inset: auto 0 0 0; width: auto; max-height: 86vh; border-radius: 18px 18px 0 0; } }
+  .drawer[hidden] { display: none; }
+  .d-h { display: flex; justify-content: space-between; gap: 12px; } .d-name { font-size: 16px; font-weight: 500; line-height: 1.3; letter-spacing: -.01em; }
+  .d-meta { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 12.5px; color: var(--muted); } .d-meta svg { color: var(--gc); }
+  .close { display: grid; place-items: center; width: 30px; height: 30px; margin: -4px -6px 0 0; border-radius: 50%; color: var(--muted); }
+  .d-stage { border-radius: 12px; box-shadow: inset 0 0 0 1px var(--stone); }
+  .d-sum { font-size: 13.5px; line-height: 1.55; color: var(--muted); } .d-sum b { font-weight: 500; color: var(--ink); }
+  .slider { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; font: 400 12px/1 var(--mono); color: var(--muted); }
+  .slider input { width: 100%; height: 20px; background: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .slider input::-webkit-slider-runnable-track { height: 1.5px; border-radius: 1px; background: #e5e5e5; }
+  .slider input::-webkit-slider-thumb { width: 14px; height: 14px; margin-top: -6.25px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px var(--ink); -webkit-appearance: none; }
+  .slider input::-moz-range-track { height: 1.5px; background: #e5e5e5; } .slider input::-moz-range-thumb { width: 12px; height: 12px; border: 1px solid var(--ink); border-radius: 50%; background: #fff; }
+  .reads { font-size: 12.5px; color: var(--muted); } .reads b { font: 400 11.5px/1 var(--mono); color: var(--ink); }
+  .code { border-radius: 12px; background: #fff; box-shadow: var(--card); overflow: hidden; }
+  .code-bar { display: flex; align-items: center; gap: 2px; padding: 6px; border-bottom: 1px solid var(--line); }
+  .tab { padding: 6px 10px; border-radius: 7px; font-size: 13px; font-weight: 500; line-height: 1; color: var(--muted); } .tab[aria-selected="true"] { color: var(--ink); box-shadow: var(--card); }
+  .copy { margin: 0 8px 0 12px; color: var(--muted); }
+  .file { margin-left: auto; font-size: 12px; color: var(--muted); }
+  pre { padding: 16px 18px; overflow-x: auto; font: 400 12.5px/1.65 var(--mono); counter-reset: l; }
+  pre span { display: block; } pre span::before { counter-increment: l; content: counter(l); display: inline-block; width: 2ch; margin-right: 16px; text-align: right; color: var(--faint); }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#"><b>hairline</b><span>v0.3.0</span></a>
+  <nav><a href="#">Figures</a><a href="#">Skill</a><a href="#">Docs</a><a href="#">Inspo</a>
+    <a href="https://github.com/lucasmarkes/hairline" aria-label="GitHub"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a></nav>
+</header>
+<main class="figs">
+  <aside class="shelves"><div class="shelf-list" id="rail"></div></aside>
+  <div>
+    <header>
+      <h1>Every figure, by what it <em>draws</em>.</h1>
+      <p class="lede">Eight shelves, twenty-seven figures, grouped by what they draw. They ship in the package, but they are here to show what a figure can be: the <a href="#">/hairline-create</a> skill draws your own. Pick one to see it large and copy its code. A last shelf holds three the skill drew from a company's mark.</p>
+    </header>
+    <div id="shelves"></div>
+  </div>
+</main>
+<aside class="drawer" id="drawer" hidden></aside>
+
+<script type="module">
+  import * as H from "https://cdn.jsdelivr.net/npm/@lucasmarkes/hairline@0.3.0/dist/index.js";
+
+  // [id, Name, summary, what a higher intensity does] — copy from the skill's figure table
+  const F = {
+    exploded: ["Exploded", "An app window taken apart into four layers. Moving across opens the gap; moving down picks a layer.", "The layers open further."],
+    terrain: ["Terrain", "Eighty-one pillars on a plinth. They rise around the pointer and settle back into a dune with two rises.", "A wider area rises."],
+    phosphor: ["Phosphor", "A seven by seven dot matrix playing a loop. Where the pointer paints, the dots fade like phosphor.", "The trail lingers longer."],
+    riffle: ["Riffle", "A tray of eight cards. The card under the pointer stands up and its neighbours lean after it. The arrow keys walk the cards.", "The ripple spreads further from the pulled card."],
+    slow: ["Slow", "Crates riding a belt through a gate. Hovering slows the clock without stopping it.", "Time slows down more."],
+    turntable: ["Turntable", "Blocks on a turntable. A flick across it spins it, and it settles on the nearest quarter turn.", "The spin coasts longer."],
+    elevator: ["Elevator", "Four floors with the shaft open and the car inside. The pointer's height picks the floor; the car travels there.", "The car travels faster between floors."],
+    keyboard: ["Keyboard", "Sixty keys in a block. The key under the pointer sinks and its neighbours follow it down, less the further away.", "A wider patch of keys sinks."],
+    phone: ["Phone", "A phone in layers: glass, board, battery, shell. Moving across opens the gap; moving down picks a layer.", "The layers open further."],
+    laptop: ["Laptop", "A thin laptop, open on its hinge. The pointer's height sets the lid; it follows on a spring.", "The lid opens wider."],
+    terminal: ["Terminal", "A terminal window with its history in rows. The pointer's height scrolls back; the line under it lifts.", "The lift spreads further."],
+    cabinet: ["Cabinet", "A rack of twelve blades, a few half out. The pointer's height pulls the nearest ones out, the farther the less.", "More blades come out."],
+    branches: ["Branches", "A commit graph with a branch forking off main and merging back. The commit under the pointer rises.", "More of the history rises."],
+    vault: ["Vault", "A vault door with a dial and three bolts. The pointer turns the dial; on the combination the bolts draw back.", "The dial coasts longer."],
+    lockers: ["Lockers", "A bank of twelve lockers, one ajar at rest. The locker under the pointer opens; the one at rest closes.", "The door opens wider."],
+    padlock: ["Padlock", "A padlock with its shackle in. As the pointer comes near the shackle lifts out and swings open.", "The shackle swings further."],
+    patch: ["Patch", "A patch panel of twenty-four ports with cables. The cable under the pointer lifts and its neighbours lean away.", "The lean spreads further."],
+    dish: ["Dish", "A parabolic dish on a two-axis gimbal. The pointer aims the dish; it follows on a spring.", "The dish swings further."],
+    router: ["Router", "A router with its antennas up. Each antenna leans toward the pointer, the nearest most.", "The lean spreads further."],
+    loupe: ["Loupe", "A stand loupe on a blank ruled sheet. The pointer drags it across; the rules pass enlarged under the glass.", "The glass magnifies more."],
+    sieve: ["Sieve", "Three test sieves stacked over a pan. The pointer's height picks one; it rises clear, and every mesh is bare.", "The gap opens further."],
+    rail: ["Rail", "A garment rail with seven bare hangers. The pointer brushes them; each rocks away, the nearest most.", "The brush reaches more hangers."],
+    plug: ["Plug", "A wall socket, and a plug on the floor at the end of its cord. The pointer draws it up; it stops short.", "The plug comes closer to the socket."],
+    query: ["Query", "A question mark built as a bent bar over a loose ball. The hook turns toward the pointer; the ball rolls after it.", "The hook turns further."],
+    drawer: ["Drawer", "A cabinet of three drawers. The pointer's height picks one; it slides out and shows two dividers, nothing between.", "The drawer opens further."],
+    basket: ["Basket", "A wire basket under a bail handle. It tilts toward the pointer and shows its bare floor.", "The basket tilts further."],
+    plot: ["Plot", "A bar chart with seven flat tabs where the bars would stand. The pointer brushes them; each lifts and drops back.", "The tabs lift higher."],
+  };
+  // shelves in the site's order, with each shelf's tint
+  const SHELVES = [
+    ["Interfaces", "#3b82f6", ["exploded"], '<rect x="1.75" y="2.75" width="12.5" height="10.5" rx="2.5" fill="currentColor" fill-opacity=".2" stroke="none"/><path d="M1.75 6h12.5"/>'],
+    ["Data", "#8b5cf6", ["terrain", "phosphor", "riffle"], '<rect x="2" y="7" width="3" height="6" rx="1" fill="currentColor" fill-opacity=".2"/><rect x="6.5" y="3" width="3" height="10" rx="1" fill="currentColor" fill-opacity=".2"/><rect x="11" y="5" width="3" height="8" rx="1" fill="currentColor" fill-opacity=".2"/>'],
+    ["Machines", "#f59e0b", ["slow", "turntable", "elevator"], '<circle cx="8" cy="8" r="4.25" fill="currentColor" fill-opacity=".2"/><circle cx="8" cy="8" r="1.25"/><path d="M8 1.75v2M8 12.25v2M1.75 8h2M12.25 8h2"/>'],
+    ["Devices", "#10b981", ["keyboard", "phone", "laptop"], '<rect x="4.75" y="1.75" width="6.5" height="12.5" rx="1.75" fill="currentColor" fill-opacity=".2"/><path d="M7 12h2"/>'],
+    ["Coding", "#0ea5e9", ["terminal", "cabinet", "branches"], '<rect x="1.75" y="2.75" width="12.5" height="10.5" rx="2.5" fill="currentColor" fill-opacity=".2" stroke="none"/><path d="M6 5c-1 0-1.25.5-1.25 1.25v.5C4.75 7.5 4.5 8 3.75 8c.75 0 1 .5 1 1.25v.5C4.75 10.5 5 11 6 11M10 5c1 0 1.25.5 1.25 1.25v.5c0 .75.25 1.25 1 1.25-.75 0-1 .5-1 1.25v.5c0 .75-.25 1.25-1.25 1.25"/>'],
+    ["Security", "#ef4444", ["vault", "lockers", "padlock"], '<path d="M8 1.75 13 3.75v4.5c0 3-2.5 5-5 6-2.5-1-5-3-5-6v-4.5L8 1.75Z" fill="currentColor" fill-opacity=".2"/><path d="M6 8l1.5 1.5L10 6.5"/>'],
+    ["Connectivity", "#ec4899", ["patch", "dish", "router"], '<circle cx="4" cy="11.5" r="2.25" fill="currentColor" fill-opacity=".2"/><circle cx="12" cy="4.5" r="2.25" fill="currentColor" fill-opacity=".2"/><path d="m5.6 10 4.8-4.1"/>'],
+    ["Empty", "#64748b", ["loupe", "sieve", "rail", "plug", "query", "drawer", "basket", "plot"], '<rect x="2.25" y="2.25" width="11.5" height="11.5" rx="3" fill="currentColor" fill-opacity=".2" stroke="none"/><rect x="2.25" y="2.25" width="11.5" height="11.5" rx="3" stroke-dasharray="2 2.4"/>'],
+  ];
+  const ALL = '<rect x="2" y="2" width="5" height="5" rx="1.5" fill="currentColor" fill-opacity=".2"/><rect x="9" y="2" width="5" height="5" rx="1.5" fill="currentColor" fill-opacity=".2"/><rect x="2" y="9" width="5" height="5" rx="1.5" fill="currentColor" fill-opacity=".2"/><rect x="9" y="9" width="5" height="5" rx="1.5" fill="currentColor" fill-opacity=".2"/>';
+  const icon = (p) => `<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+  const $ = (s) => document.querySelector(s);
+
+  // the site's rail also lists a "Marks" shelf of 3 skill-made pages, so All reads 30
+  const MARKS = ["Marks", "#f97316", { length: 3 }, '<path d="M8 2.5 13.5 12h-11L8 2.5Z" fill="currentColor" fill-opacity=".2"/><circle cx="12.25" cy="4.25" r="1.5"/>'];
+  $("#rail").innerHTML = [["All", "#0a0a0a", { length: 30 }, ALL], ...SHELVES, MARKS].map(([t, c, ids, p], i) =>
+    `<button class="shelf" style="--gc:${c}" aria-pressed="${i === 0}">${icon(p)}<span>${t}</span><span class="shelf-n">${ids.length}</span></button>`).join("");
+  $("#shelves").innerHTML = SHELVES.map(([t, c, ids]) => `<section style="--gc:${c}"><div class="head"><h2>${t}</h2><span class="count">${ids.length} of ${ids.length}</span></div>
+    <div class="grid">${ids.map((id) => `<div class="tile" data-id="${id}"><div class="stage"><div></div></div><div class="foot">${F[id][0]}</div></div>`).join("")}</div></section>`).join("");
+
+  // every tile is live: mount each figure on its tile's inner div
+  document.querySelectorAll(".tile").forEach((t) => H[t.dataset.id](t.querySelector(".stage > div")));
+
+  // the drawer: the picked figure large, the intensity slider, the read-out, the code
+  let big = null, intensity = 0.5, tab = "React";
+  const code = (id, name) => ({
+    React: [`import { ${name} } from "@lucasmarkes/hairline/react";`, "", "export default function Page() {", `  return <${name} />;`, "}"],
+    Vanilla: [`import { ${id} } from "@lucasmarkes/hairline";`, "", `const figure = ${id}(document.getElementById("figure")!);`, "", "figure.update({ intensity: 0.8 });"],
+    CDN: [`<div id="figure" style="width: 400px"></div>`, `<script type="module">`, `  import { ${id} } from "https://esm.sh/@lucasmarkes/hairline";`, `  ${id}(document.getElementById("figure"));`, `<\/script>`],
+  });
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  function open(id) {
+    const [name, sum, stronger] = F[id], shelf = SHELVES.find((s) => s[2].includes(id));
+    document.querySelectorAll(".tile").forEach((t) => t.toggleAttribute("data-picked", t.dataset.id === id));
+    big?.destroy(); intensity = 0.5;
+    const d = $("#drawer"); d.hidden = false; d.style.setProperty("--gc", shelf[1]);
+    d.innerHTML = `<div class="d-h"><div><h2 class="d-name">${name}</h2><p class="d-meta">${icon(shelf[3])}${shelf[0]}</p></div>
+      <button class="close" aria-label="Close"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg></button></div>
+      <div class="stage d-stage"><div></div></div>
+      <p class="d-sum">${sum} <b>Higher intensity:</b> ${stronger}</p>
+      <label class="slider"><span>intensity</span><input type="range" min="0" max="1" step="0.01" value="0.5"><span class="v">0.50</span></label>
+      <p class="reads">reads <b aria-live="polite"></b></p>
+      <div class="code"><div class="code-bar" role="tablist">${["React", "Vanilla", "CDN"].map((t) => `<button class="tab" role="tab" aria-selected="${t === tab}">${t}</button>`).join("")}<span class="file"></span><svg class="copy" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="2"/><path d="M10.5 3.5v-.25A1.75 1.75 0 0 0 8.75 1.5h-5.5A1.75 1.75 0 0 0 1.5 3.25v5.5c0 .97.78 1.75 1.75 1.75h.25"/></svg></div><pre></pre></div>`;
+    const reads = d.querySelector(".reads b");
+    big = H[id](d.querySelector(".d-stage > div"), { intensity, onRead: (t) => (reads.textContent = t) });
+    d.querySelector("input").addEventListener("input", (e) => {
+      intensity = Number(e.target.value);
+      d.querySelector(".v").textContent = intensity.toFixed(2);
+      big.update({ intensity });
+    });
+    const paint = () => {
+      d.querySelectorAll(".tab").forEach((b) => b.setAttribute("aria-selected", b.textContent === tab));
+      d.querySelector(".file").textContent = { React: "app/page.tsx", Vanilla: "main.ts", CDN: "index.html" }[tab];
+      d.querySelector("pre").innerHTML = code(id, name)[tab].map((l) => `<span>${esc(l) || " "}</span>`).join("");
+    };
+    d.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => { tab = b.textContent; paint(); }));
+    d.querySelector(".close").addEventListener("click", () => { d.hidden = true; big.destroy(); big = null; document.querySelectorAll(".tile").forEach((t) => t.removeAttribute("data-picked")); });
+    paint();
+  }
+  document.querySelectorAll(".tile").forEach((t) => t.addEventListener("click", () => open(t.dataset.id)));
+  open("terrain"); // the demo opens on Terrain, as the bar does
+</script>
+</body>
+</html>

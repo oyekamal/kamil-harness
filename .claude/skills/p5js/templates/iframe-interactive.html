@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Self-contained interactive with a p5 visual, for a sandboxed iframe. Ship it ONLY after
+     `node scripts/inline-p5.cjs this.html out.html` (a no-network host, e.g. CSP default-src 'none'). -->
+<script src="https://cdn.jsdelivr.net/npm/p5@2.3.4/lib/p5.min.js"></script>
+<style>
+  html, body { margin: 0; width: 720px; height: 460px; box-sizing: border-box; overflow: hidden;
+               font: 15px/1.4 system-ui, sans-serif; color: #1f2937; background: #fafaf7; }
+  .wrap { display: grid; grid-template-columns: 250px 1fr; gap: 12px; padding: 14px; height: 100%; box-sizing: border-box; }
+  .ctl label { display: block; margin: 10px 0 4px; }
+  .ctl input[type=range] { width: 100%; }
+  .out { margin-top: 16px; font-size: 18px; }
+  #viz { width: 430px; height: 430px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ctl">
+    <div><b>Ohm's law</b></div>
+    <label for="I">Current I (A)</label>
+    <input id="I" type="range" min="0.1" max="5" step="0.1" value="1">
+    <label for="R">Resistance R (Ω)</label>
+    <input id="R" type="range" min="1" max="20" step="1" value="4">
+    <div class="out">Voltage V = <span id="vOut"></span></div>
+  </div>
+  <div id="viz"></div>
+</div>
+<script>
+// 1. Contract objects FIRST, synchronously (a test harness may poll for them; do not define them in setup()).
+window.manifest = {
+  concept: "Ohm's law",
+  vary: [{ name: "I", label: "Current I", min: 0.1, max: 5, step: 0.1, selector: "#I" },
+         { name: "R", label: "Resistance R", min: 1, max: 20, step: 1, selector: "#R" }],
+  watch: [{ name: "V", label: "Voltage V", unit: "V", selector: "#vOut" }],
+  anchors: [], labels: [], // fill from the PAGE (page_quote word for word)
+};
+window.model = function ({ I, R }) { return { V: I * R }; };   // pure; everything shown comes from it
+
+// 2. One source of truth: read controls -> model() -> readout + postMessage. The p5 sketch only draws `state`.
+const $ = (id) => document.getElementById(id);
+let state = { I: 1, R: 4, V: 4 };
+function update() {
+  const I = +$('I').value, R = +$('R').value, { V } = window.model({ I, R });
+  state = { I, R, V };
+  $('vOut').textContent = V.toFixed(2) + ' V';                    // >= 3 significant digits
+  parent.postMessage({ type: 'interactive', event: { type: 'change', params: { I, R }, outputs: { V } } }, '*');
+}
+['I', 'R'].forEach((id) => $(id).addEventListener('input', update));
+update();
+
+// 3. The visual: instance mode, mounted into #viz, sized to it.
+new p5((p) => {
+  p.setup = () => { p.createCanvas(430, 430); p.textFont('system-ui'); };
+  p.draw = () => {
+    p.background('#fafaf7');
+    const h = p.map(state.V, 0, 100, 0, 360);                     // bar height follows model(), not the slider
+    p.noStroke(); p.fill('#2563eb'); p.rect(150, 400 - h, 130, h, 6);
+    p.fill('#1f2937'); p.textSize(16); p.textAlign(p.CENTER);
+    p.text(state.V.toFixed(2) + ' V', 215, 390 - h);
+    // moving charges: speed grows with current; time-based (millis), so the speed is the same at any fps
+    const off = (p.millis() / 1000) * state.I * 40;
+    p.fill('#f59e0b');
+    for (let i = 0; i < 8; i++) p.circle(40 + ((i * 50 + off) % 360), 420, 8);
+  };
+}, document.getElementById('viz'));
+</script>
+</body>
+</html>

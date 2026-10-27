@@ -1,0 +1,20 @@
+name: check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: git config --global user.email ci@example.com && git config --global user.name ci
+      - run: bash scripts/check.sh
+      - name: setup.sh names the agent and leaves no placeholders behind
+        run: |
+          ./setup.sh "Nova" "Sam"
+          ! grep -rIl --exclude-dir=.git -e '{{AGENT_NAME}}' -e '{{USER_NAME}}' . | grep -vE '^(\./)?(README\.md|setup\.sh)$'
+          grep -q "Nova" CLAUDE.md && grep -q "Sam" CLAUDE.md
+          ./setup.sh "Orion" "Sam"
+          grep -q "Orion" CLAUDE.md && ! grep -q "Nova" CLAUDE.md
+          git checkout -- . && ./setup.sh "Orion" "Sam"   # placeholders came back (like after a pull)
+          ! grep -rIl --exclude-dir=.git -e '{{AGENT_NAME}}' -e '{{USER_NAME}}' . | grep -vE '^(\./)?(README\.md|setup\.sh)$'

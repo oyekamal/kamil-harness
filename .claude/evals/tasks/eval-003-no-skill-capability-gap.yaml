@@ -1,0 +1,10 @@
+id: eval-003
+description: "No matching skill triggers SkillsMP search, not a guess"
+category: routing
+input: "Write firmware for my ESP32 weather station."
+expected:
+  route: ".claude/rules/skillsmp.md"
+  must_load: ["skillsmp.md"]
+  must_not_load: []
+  max_hops: 2
+quality_gate: PASS

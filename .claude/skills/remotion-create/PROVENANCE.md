@@ -1,0 +1,1 @@
+Vendored from github.com/remotion-dev/skills @ 4733526 on 2026-10-06. Remotion license applies to the Remotion library (free for individuals/small teams; company license for larger orgs: remotion.dev/license).

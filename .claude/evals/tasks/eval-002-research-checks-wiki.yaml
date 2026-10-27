@@ -1,0 +1,10 @@
+id: eval-002
+description: "Research checks the compiled wiki before searching the web"
+category: routing
+input: "What do we already know about vector databases?"
+expected:
+  route: "vault/wiki/Index.md"
+  must_load: ["Index.md"]
+  must_not_load: []
+  max_hops: 2
+quality_gate: PASS

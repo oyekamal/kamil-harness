@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thinking orbs</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400&display=swap">
+<script type="importmap">
+{ "imports": {
+  "react": "https://esm.sh/react@18.3.1",
+  "react/": "https://esm.sh/react@18.3.1/",
+  "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?external=react",
+  "thinking-orbs": "https://esm.sh/thinking-orbs@0.3.2?external=react"
+} }
+</script>
+<style>
+:root{
+  --bg:#070707;--text:#fbfbfb;--text-muted:rgba(251,251,251,.6);--surface:rgba(217,217,217,.05);
+  --hero-surface:rgba(217,217,217,.035);--pill-fill:rgba(29,29,29,.42);
+  --pill-stroke:inset 0 0 0 1px rgba(44,47,54,.31),inset 0 0 50px 0 rgba(255,255,255,.012);--pill-fg:#f8f8f8;
+  --shimmer-base:rgba(251,251,251,.5);--shimmer-hi:#fff;
+  --code-bg:#121212;--panel-bg:#121212;--code-text:#fff;
+  --title:#fff;--subtitle:#cacaca;--sec:#f0f0f0;--sec-muted:#cacaca;
+  --btn-bg:rgba(255,255,255,.07);--btn-hover:rgba(255,255,255,.1);--btn-fill:#fbfbfb;
+  --tab-bg:rgba(255,255,255,.03);--tab-color:rgba(251,251,251,.5);--tab-hover-bg:rgba(255,255,255,.06);--tab-hover-color:rgba(251,251,251,.7);
+  --tab-active-bg:rgba(255,255,255,.07);--tab-active-color:#fbfbfb;--tab-active-shadow:inset 0 0 0 .5px rgba(255,255,255,.02),inset 0 .5px 0 0 rgba(255,255,255,.06);
+  --strength-bg:rgba(255,255,255,.07);--strength-fill:rgba(255,255,255,.1);
+  --toggle-bg:rgba(255,255,255,.07);--toggle-color:rgba(251,251,251,.7);
+  --footer-muted:rgba(251,251,251,.4);--footer-name:rgba(251,251,251,.7);--copy-hover:rgba(255,255,255,.06);
+}
+html[data-theme="light"]{
+  --bg:#fff;--text:#1a1a1a;--text-muted:rgba(7,7,7,.6);--surface:rgba(0,0,0,.04);
+  --hero-surface:rgba(0,0,0,.028);--pill-fill:rgba(255,255,255,.6);
+  --pill-stroke:0 1px 2px rgba(0,0,0,.024),0 0 0 1px rgba(0,0,0,.036);--pill-fg:#121212;
+  --shimmer-base:rgba(7,7,7,.45);--shimmer-hi:#0d0d0d;
+  --code-bg:#ebebeb;--panel-bg:#ebebeb;--code-text:#1a1a1a;
+  --title:#1a1a1a;--subtitle:rgba(7,7,7,.6);--sec:#1a1a1a;--sec-muted:rgba(7,7,7,.55);
+  --btn-bg:rgba(0,0,0,.06);--btn-hover:rgba(0,0,0,.1);--btn-fill:#1a1a1a;
+  --tab-bg:rgba(0,0,0,.04);--tab-color:rgba(7,7,7,.55);--tab-hover-bg:rgba(0,0,0,.07);--tab-hover-color:#1a1a1a;
+  --tab-active-bg:rgba(0,0,0,.06);--tab-active-color:#1a1a1a;--tab-active-shadow:none;
+  --strength-bg:rgba(0,0,0,.04);--strength-fill:rgba(0,0,0,.07);
+  --toggle-bg:rgba(0,0,0,.06);--toggle-color:rgba(7,7,7,.7);
+  --footer-muted:rgba(7,7,7,.45);--footer-name:rgba(7,7,7,.65);--copy-hover:rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-font-smoothing:antialiased;overflow-x:clip}
+body{background:var(--bg);color:var(--text);font-family:Inter,-apple-system,sans-serif;min-height:100dvh;transition:background-color .2s,color .2s}
+main{display:flex;flex-direction:column;align-items:center;max-width:883px;margin:0 auto;width:100%;padding:0 24px 64px}
+header{position:relative;width:100%;height:218px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:53px}
+.pillbtn{position:absolute;top:16px;left:0;display:flex;align-items:center;gap:6px;height:36px;padding:0 12px 0 10px;border-radius:999px;background:var(--btn-bg);color:var(--btn-fill);font-size:13px;line-height:14px;text-decoration:none}
+.pillbtn span{display:flex;align-items:center;gap:6px;opacity:.6}
+nav{position:absolute;top:16px;right:0;display:flex;gap:16px}
+.iconbtn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:0;border-radius:999px;background:var(--btn-bg);cursor:pointer;color:var(--btn-fill)}
+.iconbtn:hover{background:var(--btn-hover)}
+.iconbtn svg{fill:var(--btn-fill);opacity:.6}
+.logo{margin:-190px 0 -20px}
+.logo img{display:block}
+html[data-theme="light"] .logo img{filter:invert(1)}
+h1{font-size:22px;font-weight:500;line-height:30px;color:var(--title)}
+.sub{font-size:14px;line-height:21px;color:var(--subtitle);opacity:.5}
+.examples{width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:48px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chips{grid-auto-rows:151px}
+.box{width:100%;border-radius:30px;background:var(--hero-surface);display:flex;align-items:center;justify-content:center;padding:32px;overflow:hidden}
+.hero{height:314px;padding:48px 40px}
+.span2{grid-row:span 2}
+.big{display:inline-flex;align-items:center;gap:12px;width:270px;height:74px;padding:0 32px 0 9px;border-radius:999px;background:var(--pill-fill);box-shadow:var(--pill-stroke);color:var(--pill-fg);font-size:18px;line-height:24px}
+.chip{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 8px;border-radius:999px;background:var(--pill-fill);box-shadow:var(--pill-stroke);color:var(--pill-fg);font-size:12px;line-height:14px}
+.shim{position:relative;display:inline-block;color:var(--shimmer-base)}
+.shim::before{content:attr(data-text);position:absolute;inset:0;background-image:linear-gradient(90deg,transparent 0%,transparent 40%,var(--shimmer-hi) 50%,transparent 60%,transparent 100%);background-size:400% 100%;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shim 2s linear infinite}
+@keyframes shim{0%{background-position:100% 0}100%{background-position:0% 0}}
+section.code{width:100%;margin-bottom:24px}
+h2{font-size:16px;font-weight:400;line-height:34px;color:var(--sec);margin-bottom:4px}
+.muted{color:var(--sec-muted)}
+.codebox{position:relative;display:flex;align-items:center;min-height:40px;background:var(--code-bg);border-radius:10px;padding:6px 40px 6px 12px}
+.codebox code{font-family:'Roboto Mono',monospace;font-size:14px;line-height:22px;color:var(--code-text);white-space:pre;overflow-x:auto}
+.copy{position:absolute;top:2px;right:2px;width:36px;height:36px;border:0;border-radius:10px;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--code-text)}
+.copy:hover{background:var(--copy-hover)}
+.copy svg{width:16px;height:16px;opacity:.5}
+.play{width:100%;display:flex;flex-direction:column;gap:6px;margin-bottom:48px}
+.panel{display:flex;flex-direction:column;gap:16px;background:var(--panel-bg);border-radius:10px;padding:16px}
+.row{display:flex;align-items:flex-end;gap:24px}
+.grp{display:flex;flex-direction:column;gap:9px;min-width:0}
+.lbl{font-size:12px;line-height:14px;color:var(--text-muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{height:36px;padding:0 12px;border:0;border-radius:8px;font:400 13px/14px Inter,sans-serif;cursor:pointer;background:var(--tab-bg);color:var(--tab-color);white-space:nowrap}
+.tab:hover{background:var(--tab-hover-bg);color:var(--tab-hover-color)}
+.tab[aria-checked="true"]{background:var(--tab-active-bg);color:var(--tab-active-color);box-shadow:var(--tab-active-shadow)}
+.speed{position:relative;width:140px;height:36px;border-radius:8px;background:var(--strength-bg);overflow:hidden}
+.speed .fill{position:absolute;inset:0 auto 0 0;border-radius:8px;background:var(--strength-fill)}
+.speed span{position:absolute;left:11px;top:0;height:100%;display:flex;align-items:center;font-size:11px;color:var(--text-muted);z-index:1;pointer-events:none}
+.speed input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:grab;z-index:2}
+.stage{width:100%;min-height:304px;border-radius:10px;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;gap:24px}
+.toggle{width:32px;height:32px;border:0;border-radius:999px;background:var(--toggle-bg);color:var(--toggle-color);cursor:pointer;display:grid;place-items:center}
+.toggle svg{width:14px;height:14px;fill:currentColor}
+footer{font-size:13px;line-height:14px;text-align:center;padding:48px 0 24px;color:var(--footer-muted)}
+footer a{color:var(--footer-name);text-decoration:none}
+@media (max-width:640px){main{padding:0 16px 48px}.g2{grid-template-columns:1fr}.chips{grid-auto-rows:auto}.span2{grid-row:auto}.box{min-height:200px;border-radius:20px}.hero{height:auto}.row{flex-direction:column;align-items:stretch}.speed{width:100%}}
+@media (prefers-reduced-motion:reduce){.shim::before{animation:none}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module">
+import React, { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import { ThinkingOrb } from 'thinking-orbs';
+const h = React.createElement;
+
+const STATES = ['working','searching','solving','listening','connecting','weaving','composing','breathing','shaping'];
+const CHIP_STATES = ['listening','working','searching','connecting','weaving','breathing','shaping'];
+const LARGE = new Set(['working','searching','connecting']);
+const RENAME = { weaving:'planning', breathing:'thinking', connecting:'solving' };
+const HERO = [{ state:'solving', label:'Solving….' }, { state:'composing', label:'Thinking….' }];
+const cap = s => s[0].toUpperCase() + s.slice(1);
+
+const svg = (vb, d, w=16, hh=16) => h('svg', { width:w, height:hh, viewBox:vb, 'aria-hidden':true }, h('path', { d }));
+const GitHub = () => svg('0 0 16 16','M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z');
+const X = () => svg('0 0 1200 1227','M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z',15,16);
+const Sun = () => h('svg',{width:16,height:16,viewBox:'0 0 24 24','aria-hidden':true},h('path',{d:'M12 7a5 5 0 100 10 5 5 0 000-10zm0-5h0v3h0zM12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round'}));
+const Chevron = () => h('svg',{width:16,height:16,viewBox:'0 0 16 16',fill:'none',stroke:'currentColor',strokeWidth:1.5,strokeLinecap:'round','aria-hidden':true},h('path',{d:'M9 11L6 8L9 5'}));
+const CopyI = () => h('svg',{viewBox:'0 0 16 16',fill:'none',stroke:'currentColor',strokeWidth:1.3,'aria-hidden':true},h('rect',{x:5.5,y:5.5,width:8,height:8,rx:1.5}),h('path',{d:'M10.5 5.5V4a1.5 1.5 0 00-1.5-1.5H4A1.5 1.5 0 002.5 4v5A1.5 1.5 0 004 10.5h1.5'}));
+const Play = () => h('svg',{viewBox:'0 0 16 16','aria-hidden':true},h('path',{d:'M4 2.5v11l9-5.5z'}));
+const Pause = () => h('svg',{viewBox:'0 0 16 16','aria-hidden':true},h('path',{d:'M4 2.5h3v11H4zM9 2.5h3v11H9z'}));
+
+const Code = ({ text }) => h('div',{className:'codebox'}, h('code',null,text),
+  h('button',{className:'copy',type:'button','aria-label':'Copy',onClick:()=>navigator.clipboard?.writeText(text).catch(()=>{})}, h(CopyI)));
+
+function Pill({ state, label, large, speed }) {
+  return h('div',{className: large ? 'big' : 'chip'},
+    large ? h(ThinkingOrb,{state,size:64,speed,style:{width:56,height:56}}) : h(ThinkingOrb,{state,size:20,speed}),
+    h('span',{className:'shim','data-text':label},label));
+}
+
+function App() {
+  const [theme, setTheme] = useState('dark');
+  const [speed, setSpeed] = useState(100);          // percent 25..300, drives hero + playground
+  const [state, setState] = useState('listening');
+  const [size, setSize] = useState(64);
+  const [paused, setPaused] = useState(true);       // playground starts paused
+  useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
+  const sp = speed / 100;
+  const props = [`state="${state}"`, `size={${size}}`]; if (speed !== 100) props.push(`speed={${sp.toFixed(2)}}`);
+  const snippet = `import { ThinkingOrb } from 'thinking-orbs';\n\n<ThinkingOrb ${props.join(' ')} />`;
+  return h('main',null,
+    h('header',null,
+      h('a',{className:'pillbtn',href:'https://www.jakubantalik.com',target:'_blank',rel:'noopener'}, h('span',null,h(Chevron),'jakubantalik.com')),
+      h('nav',{'aria-label':'External links'},
+        h('button',{className:'iconbtn',type:'button','aria-label':'Toggle theme','aria-pressed':theme==='light',onClick:()=>setTheme(t=>t==='dark'?'light':'dark')}, h(Sun)),
+        h('a',{className:'iconbtn',href:'https://github.com/Jakubantalik/thinking-orbs','aria-label':'GitHub repository'},h(GitHub)),
+        h('a',{className:'iconbtn',href:'https://x.com/jakubantalik','aria-label':'Follow on X (Twitter)'},h(X))),
+      h('div',{className:'logo','aria-hidden':true}, h('img',{src:'https://cdn.jsdelivr.net/gh/Jakubantalik/thinking-orbs@main/demo/public/header.png',width:146,height:117,alt:''})),
+      h('h1',null,'Thinking orbs'),
+      h('p',{className:'sub'},'Animated thinking orb component')),
+    h('section',{className:'examples','aria-label':'Component demonstrations'},
+      h('div',{className:'g2'}, HERO.map(p => h('div',{key:p.state,className:'box hero'}, h(Pill,{...p,large:true,speed:sp})))),
+      h('div',{className:'g2 chips'}, CHIP_STATES.map(s => {
+        const large = LARGE.has(s), copy = RENAME[s] ?? s;
+        return h('div',{key:s,className:'box'+(large?' span2':'')}, h(Pill,{state:s,large,speed:sp,label: large ? `${cap(copy)}….` : `Agent ${copy}…`}));
+      }))),
+    h('section',{className:'code'}, h('h2',null,'Installation'), h(Code,{text:'npm install thinking-orbs'})),
+    h('section',{className:'code'}, h('h2',{className:'muted'},'Usage'), h(Code,{text:`import { ThinkingOrb } from 'thinking-orbs';\n\n<ThinkingOrb state="listening" size={64} />`})),
+    h('section',{className:'play','aria-label':'Interactive playground'},
+      h('h2',null,'Playground'),
+      h('div',{className:'panel'},
+        h('div',{className:'grp',role:'radiogroup','aria-label':'Orb state'}, h('span',{className:'lbl'},'State'),
+          h('div',{className:'tabs'}, STATES.map(s => h('button',{key:s,className:'tab',type:'button',role:'radio','aria-checked':state===s,onClick:()=>setState(s)},cap(s))))),
+        h('div',{className:'row'},
+          h('div',{className:'grp',role:'radiogroup','aria-label':'Orb size'}, h('span',{className:'lbl'},'Size'),
+            h('div',{className:'tabs'}, [64,20].map(z => h('button',{key:z,className:'tab',type:'button',role:'radio','aria-checked':size===z,onClick:()=>setSize(z)},`${z}px`)))),
+          h('div',{className:'grp'}, h('span',{className:'lbl'},'Speed'),
+            h('div',{className:'speed'}, h('div',{className:'fill',style:{width:`${(speed-25)/275*100}%`}}), h('span',null,`${sp.toFixed(2)}×`),
+              h('input',{type:'range',min:25,max:300,step:5,value:speed,'aria-label':'Animation speed',onChange:e=>setSpeed(+e.target.value)}))))),
+      h('div',{className:'stage'},
+        h(ThinkingOrb,{key:`${state}-${size}`,state,size,speed:sp,paused}),
+        h('button',{className:'toggle',type:'button','aria-pressed':!paused,'aria-label':paused?'Play animation':'Pause animation',onClick:()=>setPaused(p=>!p)}, paused?h(Play):h(Pause))),
+      h(Code,{text:snippet})),
+    h('footer',null,'Made by ', h('a',{href:'https://x.com/jakubantalik'},'Jakub Antalik'),' & ', h('a',{href:'https://x.com/a_brinza'},'Alex Brinza')));
+}
+createRoot(document.getElementById('root')).render(h(App));
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><title>standalone</title>
+<style>body{margin:0;background:#ddd}</style>
+<div id="sketch"></div>
+<script type="module">
+import * as brush from "https://cdn.jsdelivr.net/npm/p5.brush@2.2.3/dist/brush.esm.js";
+const W = 600, H = 600;
+brush.createCanvas(W, H, { parent: "#sketch", id: "main" });
+brush.scaleBrushes(3);
+brush.angleMode(brush.DEGREES);
+brush.seed(42); brush.noiseSeed(42);
+brush.clear("#fffceb");
+brush.push();
+brush.translate(-W / 2, -H / 2);
+brush.set("HB", "#222", 1);
+brush.line(50, 50, 550, 550);
+brush.fill("#003c32", 120); brush.fillBleed(0.15); brush.fillTexture(0.4, 0.4);
+brush.noStroke();
+brush.circle(300, 300, 120);
+brush.set("marker", "#ff2702", 1);
+brush.noFill();
+brush.hatchStyle("HB", "#002185", 1);
+brush.hatch(8, 45, { rand: 0.1 });
+brush.rect(80, 380, 160, 140);
+brush.noHatch();
+brush.field("seabed");
+brush.set("charcoal", "#2c695a", 1.2);
+brush.flowLine(350, 80, 220, 0);
+brush.noField();
+brush.pop();
+brush.render();
+window.__done = true;
+</script>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>p5 sketch</title>
+  <!-- p5.js 2.x, pinned. -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@2.3.4/lib/p5.min.js"></script>
+  <style>
+    html, body { margin: 0; padding: 0; background: #111; }
+    main { display: grid; place-items: center; min-height: 100vh; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <main></main>
+  <script>
+    // Global mode: p5 finds setup/draw on window. One sketch per page.
+    let particles = [];
+
+    async function setup() {             // async is allowed in 2.x (replaces preload)
+      createCanvas(720, 400);            // global mode: goes into the first <main> (p5 makes one if missing)
+      colorMode(HSB, 360, 100, 100, 1);
+      noStroke();
+      for (let i = 0; i < 200; i++) particles.push({ x: random(width), y: random(height), h: random(360) });
+      describe('Coloured dots drifting along a Perlin-noise flow field on a dark background.');
+    }
+
+    function draw() {
+      background(230, 30, 8, 0.15);      // translucent background = motion trails
+      const t = millis() / 1000;
+      const step = deltaTime / 16.67;    // frame-rate independent speed (1 at 60 fps)
+      for (const p of particles) {
+        const a = noise(p.x * 0.004, p.y * 0.004, t * 0.2) * TWO_PI * 2;
+        p.x = (p.x + cos(a) * 2 * step + width) % width;
+        p.y = (p.y + sin(a) * 2 * step + height) % height;
+        fill(p.h, 70, 100, 0.9);
+        circle(p.x, p.y, 4);
+      }
+    }
+
+    function mousePressed() { particles.forEach(p => { p.x = mouseX; p.y = mouseY; }); }
+    function keyPressed() { if (key === 's') saveCanvas('frame', 'png'); }
+  </script>
+</body>
+</html>
